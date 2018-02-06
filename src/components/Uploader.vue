@@ -46,6 +46,7 @@ import Vue from 'vue'
 import { Box, XButton, XInput, XTextarea, Group, Toast, Divider, cookie } from 'vux'
 import axios from 'axios'
 import { getMimeType, getFileKey } from '../utils/qiniu'
+import { API } from '../config'
 
 export default {
   components: {
@@ -80,7 +81,7 @@ export default {
   },
   created: function () {
     let that = this
-    axios('http://172.2.0.225:8089/qiniu')
+    axios(API.qiniu_token)
       .then(function (response) {
         that.token = response.data.qiniu_token
         console.log('token = ' + that.token)
@@ -109,7 +110,26 @@ export default {
         return
       }
 
-      json.text = this.text
+      let param = new FormData()
+      param.append('text', this.text)
+      param.append('assets', JSON.stringify(json.assets))
+      param.append('token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MjYxOTQ2NzksImlhdCI6MTUxNzU1NDY3OSwic3ViIjozfQ.aqSUJNRa-OsItFh-n35hVpEk439M-DQpxImTpsGT6IU')
+
+      axios.post(API.feed,
+        param,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        })
+       .then(response => {
+         this.showToast('发布成功')
+         this.$router.replace({name: 'preview'})
+       })
+       .catch(error => {
+         console.log(error)
+         this.showToast('发布失败')
+       })
     },
     onEvent (event) {
       console.log('on', event)
@@ -147,7 +167,6 @@ export default {
     },
     inputChange: function (e) {
       var url = window.URL || window.webkitURL || window.mozURL
-      var src = null
       var files = e.target.files
 
       for (var i = 0, len = files.length; i < len; ++i) {
@@ -176,14 +195,9 @@ export default {
         wFile.realFile = file
         this.upload(wFile)
         console.log(file.type)
-        if (url) {
-          src = url.createObjectURL(file)
-        } else {
-          src = e.target.result
-        }
-        wFile.src = src
+        wFile.src = url.createObjectURL(file)
         this.dFiles.push(wFile)
-        console.log(src)
+        console.log(wFile.src)
 
         if (this.dFiles.length >= this.sizeLimit) {
           return
