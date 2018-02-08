@@ -2,6 +2,13 @@ export const format = (date) => {
   return getDateDiff(new Date(date))
 }
 
+export const getDate = () => {
+  let date = new Date()
+  let m = date.getMonth() + 1
+  let d = date.getDate()
+  return m + '月' + d + '日'
+}
+
 function getDateDiff (dateTimeStamp) {
   let minute = 1000 * 60
   let hour = minute * 60

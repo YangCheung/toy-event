@@ -34,8 +34,9 @@
         <x-button type="warn" @click.native="deleteField" action-type="button">删除</x-button>
       </box>
 
-       <actionsheet v-model="showPop" 
-      :menus='menus3' @on-click-menu="click" @on-click-menu-delete="onDelete" show-cancel></actionsheet>
+      <actionsheet v-model="showPop" 
+        :menus='menus3' @on-click-menu-delete="onDelete" show-cancel>
+      </actionsheet>
 
     </div>
 
@@ -69,7 +70,7 @@ export default {
   created () {
     let id = this.$route.params.id
     console.log('id = ' + id)
-    if (!id) {
+    if (!id || id === 'new') {
       return
     }
     let that = this
@@ -127,12 +128,12 @@ export default {
     onDelete () {
       adminDeleteField(this.field,
         (user) => {
-          this.showToast('添加成功')
+          this.showToast('删除成功')
           this.$router.replace({name: 'FieldsList'})
         },
         () => {
           console.log('error')
-          this.showToast('添加失败')
+          this.showToast('删除失败')
         })
     },
     deleteField () {

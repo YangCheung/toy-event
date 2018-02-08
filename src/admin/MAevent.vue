@@ -18,7 +18,8 @@
       <box gap="50px 15px">
         <x-button type="primary" @click.native="addEvent" action-type="button">确定</x-button>
       </box>
-      <box v-if="field.id" gap="-30px 15px">
+      <box v-if="event.id" gap="-30px 15px">
+        <x-button type="warn" @click.native="activate" action-type="button">激活</x-button>
         <x-button type="warn" @click.native="deleteField" action-type="button">删除</x-button>
       </box>
 
@@ -33,19 +34,20 @@
  
 <script>
 import { Actionsheet, Toast, Radio, SwipeoutButton, XInput, Box, XButton, Cell, Group } from 'vux'
-import { deleteEvent, putEvent, eventList } from '../api/ManagerApi'
-import { getUser } from '../config'
+import { activateEvent, deleteEvent, putEvent, eventList } from '../api/ManagerApi'
+// import { getUser } from '../config'
 
 export default {
-  name: 'event',
+  name: 'MAevent',
   components: {
     Actionsheet, Toast, Radio, SwipeoutButton, XInput, Box, XButton, Cell, Group
   },
   data () {
     return {
+      id: '',
+      field_id: '',
       only_video: false,
-      field: {},
-      admins: [],
+      event: {},
       fieldText: '',
       inputAdminPhone: '',
       showErrorToast: false,
@@ -58,13 +60,13 @@ export default {
     }
   },
   created () {
-    let id = this.$route.params.id
-    console.log('id = ' + id)
-    if (!id || id === 'new') {
+    this.id = this.$route.params.id
+    this.field_id = this.$route.params.fieldid
+    if (!this.id || this.id === 'new') {
       return
     }
     let that = this
-    eventList(id, getUser().fields[0],
+    eventList(this.id, this.field_id,
      (response) => {
        that.setData(response[0])
        console.log(response)
@@ -88,13 +90,12 @@ export default {
         this.showToast('请输入活动描述')
         return
       }
-      this.field.field_id = getUser().fields[0]
-      this.field.desc_text = this.fieldText
-      this.field.only_video = this.only_video
-      putEvent(this.field,
+      this.event.desc_text = this.fieldText
+      this.event.only_video = this.only_video
+      putEvent(this.event, this.field_id,
         (user) => {
           this.showToast('添加成功')
-          this.$router.replace({name: 'events'})
+          this.$router.replace({name: 'eventslist'})
         },
         () => {
           console.log('error')
@@ -102,10 +103,9 @@ export default {
         })
     },
     onDelete () {
-      deleteEvent(this.field,
+      deleteEvent(this.event,
         (user) => {
-          this.showToast('添加成功')
-          this.$router.replace({name: 'events'})
+          this.$router.replace({name: 'eventslist'})
         },
         () => {
           console.log('error')
@@ -116,9 +116,24 @@ export default {
       this.showPop = true
     },
     setData (value) {
-      this.field = value
+      this.event = value
       this.fieldText = value.desc_text
       this.only_video = value.only_video
+    },
+    activate () {
+      activateEvent(
+        {
+          field_id: this.event.field_id,
+          activate: 1,
+          id: this.event.id
+        },
+        (user) => {
+          this.$router.replace({name: 'eventslist'})
+        },
+        () => {
+          console.log('error')
+          this.showToast('激活失败')
+        })
     }
   }
 }

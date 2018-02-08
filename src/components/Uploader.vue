@@ -1,18 +1,9 @@
 <template>
   <div>
-    <div class="daily-event-title">
-      <div class="title">今日活动</div>
-      <div class="desc">用9张图片表达祖国山河美好，世界和平</div>
-    </div>
-    
-    <!-- <div class="weui-uploader__hd">
-          <p class="weui-uploader__title">~~发动态~~     (一个视频或最多9张图片)</p>
-    </div> -->
-    <group>
-        <x-textarea :max="140" :placeholder="'随便说点什么'" v-on:on-change='textValue' @on-focus="onEvent('focus')"></x-textarea>
+    <group title="参加今日活动">
+        <x-textarea :max="140" v-model="text" placeholder="随便说点什么"></x-textarea>
       </group>
     <div class="weui-uploader" style="padding:15px;">
-
       
     <div class="weui-uploader__bd">
       <ul class="weui-uploader__files" id="uploaderFiles">
@@ -26,7 +17,7 @@
         </li>
       </ul>
       <div class="weui-uploader__input-box" v-show="dFiles.length < sizeLimit">
-        <input id="uploaderInput" v-on:change="inputChange" class="weui-uploader__input" type="file" multiple="multiple" accept="video/* image/*" />
+        <input id="uploaderInput" v-on:change="fileSelected" class="weui-uploader__input" type="file" multiple="multiple" accept="video/* image/*" />
       </div>
     </div>
 
@@ -47,6 +38,7 @@ import { Box, XButton, XInput, XTextarea, Group, Toast, Divider, cookie } from '
 import axios from 'axios'
 import { getMimeType, getFileKey } from '../utils/qiniu'
 import { API } from '../config'
+import { sendPost } from '../api/api'
 
 export default {
   components: {
@@ -64,7 +56,7 @@ export default {
       sizeLimit: 9,
       mode: '',
       dFiles: [],
-      token: '',
+      qiniu_token: '',
       results: [],
       toastMsg: '',
       showTst: false
@@ -79,60 +71,52 @@ export default {
       }
     }
   },
+  beforeRouteEnter (to, from, next) {
+    console.log(from)
+    if (from.path === '/') {
+      next({name: 'home'})
+    } else {
+      next()
+    }
+  },
   created: function () {
     let that = this
     axios(API.qiniu_token)
       .then(function (response) {
-        that.token = response.data.qiniu_token
-        console.log('token = ' + that.token)
-        if (that.token) {
-          cookie.set('qiniu_token', that.token, {
+        that.qiniu_token = response.data.qiniu_token
+        if (that.qiniu_token) {
+          cookie.set('qiniu_token', that.qiniu_token, {
             expires: 1
           })
         }
       })
   },
   methods: {
-    textValue: function (text) {
-      this.text = text
-      console.log('text = ' + text)
-    },
     submit: function () {
-      let json = {assets: [], text: ''}
+      let assets = []
       for (var i = 0; i < this.dFiles.length; i++) {
         let file = this.dFiles[i]
         if (file.result) {
-          json.assets.push(file.result)
+          assets.push(file.result)
         }
       }
-      if (json.assets.length === 0) {
+      if (assets.length === 0) {
         this.showToast('图片上传不完整')
         return
       }
 
-      let param = new FormData()
-      param.append('text', this.text)
-      param.append('assets', JSON.stringify(json.assets))
-      param.append('token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MjYxOTQ2NzksImlhdCI6MTUxNzU1NDY3OSwic3ViIjozfQ.aqSUJNRa-OsItFh-n35hVpEk439M-DQpxImTpsGT6IU')
-
-      axios.post(API.feed,
-        param,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        })
-       .then(response => {
-         this.showToast('发布成功')
-         this.$router.replace({name: 'preview'})
-       })
-       .catch(error => {
-         console.log(error)
-         this.showToast('发布失败')
-       })
-    },
-    onEvent (event) {
-      console.log('on', event)
+      let feed = {
+        event_id: 5,
+        text: this.text,
+        assets: assets
+      }
+      sendPost(feed, (response) => {
+        this.showToast('发布成功')
+        this.$router.replace({name: 'preview'})
+      }, (error) => {
+        console.log(error)
+        this.showToast('发布失败')
+      })
     },
     showToast: function (msg) {
       this.toastMsg = msg
@@ -147,7 +131,7 @@ export default {
       console.log('file = ' + realFile.name)
       param.append('file', realFile, realFile.name)
       param.append('key', getFileKey(realFile.name))
-      param.append('token', this.token)
+      param.append('token', this.qiniu_token)
       let config = {
         headers: {'Content-Type': 'multipart/form-data'},
         onUploadProgress: function (progressEvent) {
@@ -165,7 +149,7 @@ export default {
             Vue.set(file, 'percent', 100)
           })
     },
-    inputChange: function (e) {
+    fileSelected (e) {
       var url = window.URL || window.webkitURL || window.mozURL
       var files = e.target.files
 

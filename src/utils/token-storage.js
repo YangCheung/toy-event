@@ -3,7 +3,7 @@ import { logger } from '../utils/logger'
 export const saveToken = (token) => {
   const localStorage = window.localStorage
   try {
-    localStorage.setItem('token', JSON.stringify(token))
+    localStorage.setItem('token', token)
     logger('localStorage-save-token', 'token save in localStorage succeed')
   } catch (error) {
     logger('localStorage-save-token', error)
