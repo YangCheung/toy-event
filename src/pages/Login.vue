@@ -30,7 +30,7 @@
 import { Countdown, Toast, Loading, XInput, Box, XButton, Cell, Group } from 'vux'
 import { sendSmsCode, verifyCode } from '../api/api'
 import { saveToken } from '../utils/token-storage'
-import { setUser } from '../config'
+import { saveUserInfo } from '../utils/user-storage'
 
 export default {
   name: 'login',
@@ -91,7 +91,7 @@ export default {
         (user) => {
           this.showLoging = false
           saveToken(user.token)
-          setUser(user.user)
+          saveUserInfo(user.user)
           this.$router.replace({name: 'home'})
         },
         (error) => {

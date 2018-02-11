@@ -1,5 +1,5 @@
 export const format = (date) => {
-  return getDateDiff(new Date(date))
+  return getDateDiff(new Date(date).getTime())
 }
 
 export const getDate = () => {
@@ -13,7 +13,6 @@ function getDateDiff (dateTimeStamp) {
   let minute = 1000 * 60
   let hour = minute * 60
   let day = hour * 24
-//   let halfamonth = day * 15
   let month = day * 30
   let now = new Date().getTime()
   let diffValue = now - dateTimeStamp

@@ -1,9 +1,9 @@
 <template lang="html">
   <div>
     <group title="完善信息">
-      <x-input title="个人QQ" v-model="qq" placeholder="请输入qq" :show-clear="true" placeholder-align="right" :max="20"></x-input>
-      <x-input title="QQ昵称" v-model="nickName" placeholder="" :show-clear="true" placeholder-align="right" :max="20"></x-input>
-      <x-input title="所在群QQ号" v-model="qqGroup" placeholder="" :show-clear="true" placeholder-align="right" :max="20"></x-input>
+      <x-input title="QQ号码" labelWidth="100px" keyboard="number" v-model="qq" placeholder="请输入个人QQ号码" :show-clear="true"  :max="16"></x-input>
+      <x-input title="QQ昵称" labelWidth="100px" v-model="nickName" placeholder="QQ昵称" :show-clear="true"  :max="10"></x-input>
+      <x-input title="QQ群号码" labelWidth="100px" keyboard="number" v-model="qqGroup" placeholder="输入你所在群号码" :show-clear="true" :max="16"></x-input>
     </group>
   
     <toast
@@ -20,15 +20,15 @@
 </template>
  
 <script>
-import { Toast, XInput, Box, XButton, Group } from 'vux'
+import { Toast, XInput, Box, XButton, Group, Cell } from 'vux'
 import { editUserProfile } from '../../api/api'
 
-import { getUser, setUser } from '../../config'
+import { getUser, saveUserInfo } from '../../utils/user-storage'
 
 export default {
   name: 'editprofile',
   components: {
-    Toast, XInput, Box, XButton, Group
+    Toast, XInput, Box, XButton, Group, Cell
   },
   data () {
     return {
@@ -57,7 +57,7 @@ export default {
       user.nick_name = this.nickName
       editUserProfile(user,
         (user) => {
-          setUser(user)
+          saveUserInfo(user)
           this.showToast('成功')
           this.$router.replace({name: 'current-event'})
         },

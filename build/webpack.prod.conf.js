@@ -9,10 +9,19 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const QiniuPlugin = require('qn-webpack');
 
 const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : require('../config/prod.env')
+
+
+const qiniuPlugin = new QiniuPlugin({
+  accessKey: '-m1LzxFKMhXaApWxDgK8TyI99gTy-RJYIEg0c9Ig',
+  secretKey: 'IStf6MkdpmzFu7Q2rou0mCU8feL0_4uz0JAjEjJ0',
+  bucket: 'store-live-default',
+  batch: 1
+});
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -26,9 +35,12 @@ const webpackConfig = merge(baseWebpackConfig, {
   output: {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js'),
+    publicPath: "http://assetdef.moboo.ly/"
+
   },
   plugins: [
+    qiniuPlugin,
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
@@ -68,7 +80,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
-        removeAttributeQuotes: true
+        removeAttributeQuotes: false,
         // more options:
         // https://github.com/kangax/html-minifier#options-quick-reference
       },

@@ -35,7 +35,6 @@
 <script>
 import { Actionsheet, Toast, Radio, SwipeoutButton, XInput, Box, XButton, Cell, Group } from 'vux'
 import { activateEvent, deleteEvent, putEvent, eventList } from '../api/ManagerApi'
-// import { getUser } from '../config'
 
 export default {
   name: 'MAevent',

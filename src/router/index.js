@@ -16,9 +16,10 @@ import FieldQQGroups from '@/admin/fields/FieldQQGroups'
 import AddField from '@/admin/AddField'
 import EventList from '@/admin/EventList'
 import MAevent from '@/admin/MAevent'
-import { setUser, getUser } from '../config'
-import { getToken } from '../utils/token-storage'
-import { getUserProfile } from '../api/api'
+import { getUser } from '../utils/user-storage'
+
+// import { getToken } from '../utils/token-storage'
+// import { getUserProfile } from '../api/api'
 
 Vue.use(Router)
 
@@ -27,7 +28,52 @@ let router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta: {
+        NoAuth: true
+      },
+      children: [
+        {
+          path: '/current-event',
+          name: 'current-event',
+          component: CurrentEvent
+        },
+        {
+          path: '/fields/:fieldid/events',
+          name: 'eventslist',
+          component: EventList
+        },
+        {
+          path: '/fields/:fieldid/events/:id',
+          name: 'mevent',
+          component: MAevent
+        },
+        {
+          path: '/up',
+          name: 'Uploader',
+          component: Uploader
+        },
+        {
+          path: '/fields',
+          name: 'FieldsList',
+          component: FieldsList
+        },
+        {
+          path: '/fields/:id',
+          name: 'mfield',
+          component: AddField
+        },
+        {
+          path: '/fields/:id/admins',
+          name: 'field-admins',
+          component: FieldAdmins
+        },
+        {
+          path: '/fields/:id/qq-groups',
+          name: 'field-qq-groups',
+          component: FieldQQGroups
+        }
+      ]
     },
     {
       path: '/login',
@@ -43,100 +89,67 @@ let router = new Router({
       component: EditProfile
     },
     {
-      path: '/current-event',
-      name: 'current-event',
-      component: CurrentEvent
-    },
-    {
-      path: '/fields/:fieldid/events',
-      name: 'eventslist',
-      component: EventList
-    },
-    {
-      path: '/fields/:fieldid/events/:id',
-      name: 'mevent',
-      component: MAevent
-    },
-    {
       path: '/preview',
       name: 'preview',
       component: preview
     },
     {
-      path: '/up',
-      name: 'Uploader',
-      component: Uploader
-    },
-    {
-      path: '/fields',
-      name: 'FieldsList',
-      component: FieldsList
-    },
-    {
-      path: '/fields/:id',
-      name: 'mfield',
-      component: AddField
-    },
-    {
-      path: '/fields/:id/admins',
-      name: 'field-admins',
-      component: FieldAdmins
-    },
-    {
-      path: '/fields/:id/qq-groups',
-      name: 'field-qq-groups',
-      component: FieldQQGroups
+      path: '*',
+      redirect: '/'
     }
+
   ]
 })
 
-function checkUserInfo (user, next, to) {
-  if (user.fields.length > 0) {
-    next()
-    return
-  }
-  if (user.admin) {
-    next()
-    return
-  }
+// function checkUserInfo (user, next, to) {
+//   if (user.fields.length > 0) {
+//     next()
+//     return
+//   }
+//   if (user.admin) {
+//     next()
+//     return
+//   }
 
-  if (!user.qq && to.name !== 'edituser') {
-    next({
-      path: '/edituser'
-    })
-  }
-  next()
-}
+//   if (!user.qq && to.name !== 'edituser') {
+//     next({
+//       path: '/edituser'
+//     })
+//   }
+//   next()
+// }
 
 router.beforeEach((to, from, next) => {
   console.log(to)
-  if (to.meta.NoAuth) {
+  if (to.meta.NoAuth || to.path === '/') {
     next()
     return
   }
 
   let user = getUser()
   if (!user) {
-    let ltoken = getToken()
-    if (!ltoken) {
-      next({path: '/login'})
-      return
-    }
+    next({name: 'home'})
+    // let ltoken = getToken()
+    // if (!ltoken) {
+    //   next({path: '/login'})
+    //   return
+    // }
 
-    getUserProfile(
-      (response) => {
-        setUser(response)
-        checkUserInfo(response, next, to)
-        console.log(response)
-      },
-       (error) => {
-         next({path: '/login'})
-         console.log(error)
-       })
+    // getUserProfile(
+    //   (response) => {
+    //     saveUserInfo(response)
+    //     checkUserInfo(response, next, to)
+    //     console.log(response)
+    //   },
+    //    (error) => {
+    //      next({path: '/login'})
+    //      console.log(error)
+    //    })
     return
   }
 
-  checkUserInfo(user, next, to)
+  // checkUserInfo(user, next, to)
+  next()
 })
 
 export default router

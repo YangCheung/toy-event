@@ -20,7 +20,6 @@
 <script>
 import { Box, XButton, Cell, Group } from 'vux'
 import { eventList } from '../api/ManagerApi'
-// import { getUser } from '../config'
 
 export default {
   name: 'events',

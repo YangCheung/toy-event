@@ -1,13 +1,12 @@
 <template>
   <div>
-    <group title="参加今日活动">
+    <group :title="'参加今日活动 仅限'+(this.mode === 'video' ? '视频' : '图片')">
         <x-textarea :max="140" v-model="text" placeholder="随便说点什么"></x-textarea>
       </group>
     <div class="weui-uploader" style="padding:15px;">
       
     <div class="weui-uploader__bd">
       <ul class="weui-uploader__files" id="uploaderFiles">
-        <!-- :style="{ 'background-image': `url(${file})`}" -->
         <li v-for="(file, index) in dFiles" v-bind:class="{'weui-uploader__file': true, 'weui-uploader__file_status': file.percent < 100}"  v-bind:key="file.src" >
           <video v-if="file.type ==='video'" class="file-image" :src='file.src'/>
           <img v-else class="file-image" :src='file.src'>
@@ -17,10 +16,9 @@
         </li>
       </ul>
       <div class="weui-uploader__input-box" v-show="dFiles.length < sizeLimit">
-        <input id="uploaderInput" v-on:change="fileSelected" class="weui-uploader__input" type="file" multiple="multiple" accept="video/* image/*" />
+        <input id="uploaderInput" v-on:change="fileSelected" class="weui-uploader__input" type="file" multiple="multiple" :accept="mediaType" />
       </div>
     </div>
-
     </div>
       <div class="weui-uploader__hd">
         <div class="weui-uploader__info">{{dFiles.length}}/{{sizeLimit}}</div>
@@ -52,9 +50,10 @@ export default {
   },
   data () {
     return {
+      videoType: false,
       text: '',
       sizeLimit: 9,
-      mode: '',
+      mode: 'image',
       dFiles: [],
       qiniu_token: '',
       results: [],
@@ -71,9 +70,14 @@ export default {
       }
     }
   },
+  computed: {
+    mediaType () {
+      return this.mode === 'image' ? 'image/*' : 'video/*'
+    }
+  },
   beforeRouteEnter (to, from, next) {
     console.log(from)
-    if (from.path === '/') {
+    if (from.path === '/' || !to.query.event_id) {
       next({name: 'home'})
     } else {
       next()
@@ -81,6 +85,11 @@ export default {
   },
   created: function () {
     let that = this
+    const videoType = this.$route.query.only_video
+    if (videoType) {
+      this.sizeLimit = 1
+      this.mode = 'video'
+    }
     axios(API.qiniu_token)
       .then(function (response) {
         that.qiniu_token = response.data.qiniu_token
@@ -106,13 +115,13 @@ export default {
       }
 
       let feed = {
-        event_id: 5,
+        event_id: this.$route.query.event_id,
         text: this.text,
         assets: assets
       }
       sendPost(feed, (response) => {
         this.showToast('发布成功')
-        this.$router.replace({name: 'preview'})
+        this.$router.replace({name: 'current-event'})
       }, (error) => {
         console.log(error)
         this.showToast('发布失败')
@@ -158,16 +167,9 @@ export default {
         let file = files[i]
         let type = getMimeType(file.type)
         if (type && (type === 'image' || type === 'video')) {
-          if (!this.mode) {
-            this.mode = type
-            if (this.mode === 'video') {
-              this.sizeLimit = 1
-            }
-          }
           wFile.type = type
           if (type !== this.mode) {
-            console.warn('type 不相同！')
-            this.showToast('不能同时选择图片和视频')
+            this.showToast('该活动只能发' + (this.mode === 'video' ? '视频' : '图片'))
             return
           }
         } else {
