@@ -373,7 +373,9 @@ export default {
   overflow: hidden;
 
   & li {
-    float: left
+    float: left;
+    list-style-type:none;
+    margin-top: 5px;  
   }    
   & div {
     position: relative;
