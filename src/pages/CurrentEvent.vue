@@ -4,7 +4,7 @@
       <div class="m-img" ></div>
       <div slot="content" class="m-main">
         <div>
-          <div class="m-title" >今日活动</div>
+          <div class="m-title">{{getTitle}}</div>
           <div >{{event ? event.desc_text : ''}}</div>  
           <div v-if="event" class="m-sub-title"> {{event.only_video ? '仅限视频' : '仅限图片' }}</div>  
         </div>        
@@ -21,13 +21,13 @@
         width="auto"
         :time="1200">{{ toastMsg }}
       </toast>
-      <box gap="50px 15px">
-        <x-button type="primary" @click.native="joinEvent" action-type="button">参加活动</x-button>
+      <box v-if="event.activity == 1" gap="10px 15px">
+        <x-button @click.native="joinEvent" action-type="button">参加活动</x-button>
       </box>     
     </div>
       
-    <div  v-if="event && event.post" class="home">
-      <div class="content-tip no-text-select" v-show="noPost">
+    <div v-if="event && event.post" class="home">
+      <div class="content-tip no-text-select" v-show="event.post.length == 0">
         <span>这会儿还没有新动态，等会再来刷刷看吧(｡･ω･｡)！</span>
       </div> 
       <div class="card" v-for="(item,index) in event.post">
@@ -42,12 +42,14 @@
           </header>
           <section class="card-body">
             <p class="default-content" v-html="item.text"></p>
-            <div v-if="item.assets.length === 1" :class="{singlePic:!isVideo(item), singleVideo: isVideo(item)}">
-              <img v-if="!isVideo(item)" @click="show(item.assets, 0)" :src="getImageUrl(item.assets[0], true)">
-              <div v-else @click="playVideo(item.assets[0])" class='video'>
-                <img :src="getImageUrl(item.assets[0], true)">
-                <img class="asset-load-icon-item" src='http://assetlib.moboo.ly/moboo.displayer.asset.btn_playvideo@2x_001.svg'>
-              </div>
+            <div v-if="item.assets.length === 1" :class="{singlePic:!isVideo(item), singleVideo: isVideo(item)}" v-lazy-container="{selector:'img'}">
+              <img v-if="!isVideo(item)" @click="show(item.assets, 0)" :data-src="getImageUrl(item.assets[0], true)">
+              <!-- <div v-else @click="playVideo(item.assets[0])" class='video'> -->
+                <!-- <img :data-src="getVideoThumb(item.assets[0])">
+                <img class="asset-load-icon-item" data-src='http://assetlib.moboo.ly/moboo.displayer.asset.btn_playvideo@2x_001.svg'> -->
+              <!-- </div> -->
+              <video v-else  :poster="getVideoThumb(item.assets[0])" :src="item.assets[0].url" controls="true"/>
+
             </div>
             <ul v-if="item.assets.length >= 2" class="pic-list">
               <li v-for="(asset,a_index) in item.assets" @click="show(item.assets, a_index)">
@@ -61,9 +63,11 @@
     <div v-transfer-dom>
       <previewer :list="imageList" ref="previewer"></previewer>
     </div>
-    <!-- <div @touchmove.prevent v-show="showVideo" class='full-screen-video'>
-      <video v-on:webkitfullscreenchange="videoExitFullScreen" v-on:fullscreenchange="videoExitFullScreen"
-       controls="controls" id="video-full" ref='fullScreenVideo'></video>
+    <!-- <div v-if="!iOS" @touchmove.prevent v-show="showVideo" class='full-screen-video'>
+      <video id='superVideo' v-on:webkitfullscreenchange="videoExitFullScreen" v-on:fullscreenchange="videoExitFullScreen"
+       controls="controls" ref='fullScreenVideo'>
+           <source src="MY_VIDEO.webm" type='video/*'>
+      </video>
       <button @click='closeVideo' class="video-close"></button>
     </div> -->
     <div v-transfer-dom>
@@ -76,7 +80,8 @@
 import { Previewer, TransferDom, Divider, Toast, Loading, Masker, Box, XButton, Cell, Group } from 'vux'
 import { getCurrentEvent, getPostByEvent } from '../api/api'
 import { getDate, format } from '../utils/date-utils'
-// import { requestFullScreen } from '../utils/util'
+import { isiOS, requestFullScreen } from '../utils/util'
+// import videojs from 'videojs'
 
 export default {
   name: 'current_event',
@@ -102,15 +107,26 @@ export default {
       showErrorToast: false,
       toastMsg: '',
       sendDisable: false,
-      videoSource: null
+      videoSource: null,
+      fullWidth: document.documentElement.clientWidth,
+      iOS: isiOS()
+    }
+  },
+  computed: {
+    getTitle () {
+      if (this.event) {
+        return this.event.activity === 1 ? '当前活动' : '活动存档'
+      } else {
+        return '无活动'
+      }
     }
   },
   created () {
     this.date = getDate()
     this.showLoging = true
     let self = this
-
-    getCurrentEvent(result => {
+    let eventId = this.$route.query.eventId
+    getCurrentEvent(eventId, result => {
       self.event = result.event
       self.join = result.join
 
@@ -128,21 +144,29 @@ export default {
   },
   methods: {
     closeVideo () {
-      let videoEle = this.$refs.fullScreenVideo
-      videoEle.pause()
-      this.showVideo = false
-      document.body.className = ''
+      // let videoEle = this.$refs.fullScreenVideo
+      // videoEle.pause()
+      // this.showVideo = false
+      // document.body.className = ''
     },
     videoExitFullScreen () {
-      if (!document.webkitIsFullScreen) {
-        this.closeVideo()
-      };
+      // if (!document.webkitIsFullScreen) {
+      //   this.closeVideo()
+      // };
+    },
+    videoEnterFullScreen () {
+      requestFullScreen()
     },
     playVideo (video) {
       if (video) {
-        window.location.href = video.url
-        // window.open(video.url)
-        // this.showVideo = true
+        if (this.iOS) {
+          window.location.href = video.url
+          return
+        }
+        console.log({src: video.url, type: video.asset_type})
+        var myPlayer = window.videojs('#superVideo')
+        myPlayer.src({src: video.url, type: 'video/mp4'})
+        this.showVideo = true
         // let videoEle = this.$refs.fullScreenVideo
         // videoEle.innerHTML = ''
         // if (!this.videoSource) {
@@ -161,9 +185,6 @@ export default {
       }
     },
     getImageUrl (asset, single) {
-      if (asset.asset_type.startsWith('video')) {
-        return asset.url + '?vframe/jpg/offset/1/w/' + 250
-      }
       let aw = asset.w
       let ah = asset.h
       let wh = aw / ah
@@ -177,6 +198,22 @@ export default {
         h = Math.round(h * ah / aw)
       }
       return asset.url + '?imageView2/2/w/' + w + '/h/' + h + '/interlace/1'
+    },
+    getVideoThumb (asset) {
+      // let aw = asset.w
+      // let ah = asset.h
+      // let wh = aw / ah
+
+      // let w = this.fullWidth
+      // let h = 200
+
+      // if (wh > 1) {
+      //   w = Math.round(w * aw / ah)
+      // } else {
+      //   h = Math.round(h * ah / aw)
+      // }
+      return asset.url + '?vframe/jpg/offset/1'
+      // /w/' + w + '/h/' + h
     },
     show (list, index) {
       this.imageList = list.map((item) => {
@@ -273,7 +310,7 @@ export default {
 .card {
   width :100%;
   background-color: #fff;
-  margin-bottom: .5625rem;
+  margin-bottom: 10px;
   position: relative;
   box-shadow: 0 1px 0.1875rem -0.125rem rgba(0,0,0,.2)
 }
@@ -382,11 +419,16 @@ export default {
 .singleVideo {
   position: relative;
   margin-top: 6.25px;
-  height: 200px;
+  // height: 200px;
+  max-height: 400px;
   width: 100%;
   overflow: hidden;
-  background-color:#ebebeb;
-
+  video {
+    width: 100%;
+    max-height: 400px;
+    max-width: 400px;
+    background: #000
+  }
   .video{
     // position: relative;
     // width: 100%;
@@ -404,6 +446,7 @@ export default {
       height: 80px;
       top: 50%;
       left: 50%;
+      z-index: 100;
       transform: translate3d(-50%, -50%, 0);
     }
   } 

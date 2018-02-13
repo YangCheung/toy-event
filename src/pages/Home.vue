@@ -59,12 +59,4 @@ export default {
 </script>
  
 <style lang="css">
-.home {
-    flex: 1;
-    background-color: #fff;
-    border-radius: 2px;
-    padding: 10px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
-}
 </style>

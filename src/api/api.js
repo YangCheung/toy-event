@@ -28,9 +28,10 @@ export function getUserProfile (callBack, errorCallback) {
   })
 }
 
-export function getCurrentEvent (callBack, errorCallback) {
+export function getCurrentEvent (eventId, callBack, errorCallback) {
   axios.get(API.current_event, {
     params: {
+      eventId: eventId,
       token: getToken()
     }
   })

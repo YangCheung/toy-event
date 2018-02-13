@@ -1,8 +1,8 @@
 /* eslint-disable */
 import axios from 'axios'
 
-// const apiHost = 'http://172.2.0.225:8090/api/'
-const apiHost = 'http://192.168.1.14:8090/api/'
+const apiHost = 'http://172.2.0.225:8090/api/'
+// const apiHost = 'http://192.168.1.14:8090/api/'
 // const apiHost = 'http://pk.moboo.ly/api/'
 
 const api_router_config = {

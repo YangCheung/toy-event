@@ -30,7 +30,7 @@ export function adminGetUser (qq, userPhone, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -50,7 +50,7 @@ export function adminAddField (field, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -71,7 +71,7 @@ export function adminDeleteField (field, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -92,7 +92,7 @@ export function deleteFieldAdmin (fieldId, adminId, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -112,7 +112,7 @@ export function addFieldAdmin (fieldId, adminId, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -133,7 +133,7 @@ export function deleteFieldQQGroup (fieldId, qq, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -153,7 +153,7 @@ export function addFieldQQGroup (fieldId, qq, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }

@@ -40,7 +40,7 @@ export default {
     clickMore (key) {
       if (key === 'home') {
         this.goHome()
-      } else {
+      } else if (key === 'logout') {
         clearUserInfo()
         clearToken()
         this.$router.replace({name: 'login'})

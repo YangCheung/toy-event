@@ -7,3 +7,8 @@ export function requestFullScreen (document) {
     document.webkitRequestFullScreen()
   }
 }
+
+export function isiOS (document) {
+  var u = navigator.userAgent
+  return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+}

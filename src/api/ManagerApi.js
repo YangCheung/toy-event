@@ -38,7 +38,7 @@ export function putEvent (event, field_id, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -59,7 +59,7 @@ export function deleteEvent (event, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error)
     console.log(error)
   })
 }
@@ -80,7 +80,7 @@ export function activateEvent (event, callBack, errorCallback) {
     console.log(response)
   })
   .catch(function (error) {
-    if (errorCallback) errorCallback(errorCallback)
+    if (errorCallback) errorCallback(error.response.data)
     console.log(error)
   })
 }
