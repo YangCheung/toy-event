@@ -22,7 +22,7 @@
         :time="1200">{{ toastMsg }}
       </toast>
       <box v-if="event.activity == 1" gap="10px 15px">
-        <x-button @click.native="joinEvent" action-type="button">参加活动</x-button>
+        <x-button :disabled="join == 1" @click.native="joinEvent" action-type="button">{{join == 1 ? '已参加' : '参加活动'}}</x-button>
       </box>     
     </div>
       
