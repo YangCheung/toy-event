@@ -120,3 +120,20 @@ export function getPostByEvent (eventId, callBack, errorCallback) {
     if (errorCallback) errorCallback(error)
   })
 }
+
+export function getVote (voteId, callBack, errorCallback) {
+  var config = {
+    method: 'get',
+    url: API.pk,
+    params: { voteId: voteId },
+    headers: {
+      'token': getToken()
+    }
+  }
+  axios(config).then(function (response) {
+    if (callBack) callBack(response.data.result)
+  })
+  .catch(function (error) {
+    if (errorCallback) errorCallback(error)
+  })
+}

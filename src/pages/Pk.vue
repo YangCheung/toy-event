@@ -10,116 +10,41 @@
         </div>        
         <span class="m-time">{{date}}</span>
       </div>
-    </masker> 
-    <div v-if="!event" class="no-event">
-      暂无活动
-    </div>
-    <div v-if="event">        
-      <toast
-        v-model="showErrorToast"
-        type="text"
-        width="auto"
-        :time="1200">{{ toastMsg }}
-      </toast>
-      <box v-if="event.activity == 1" gap="10px 15px">
-        <x-button :disabled="join == 1" @click.native="joinEvent" action-type="button">{{join == 1 ? '已参加' : '参加活动'}}</x-button>
-      </box>     
-    </div>
-      
-    <div v-if="event && event.post" class="home">
-      <div class="content-tip no-text-select" v-show="event.post.length == 0">
-        <span>这会儿还没有新动态，等会再来刷刷看吧(｡･ω･｡)！</span>
-      </div> 
-      <div class="card" v-for="(item,index) in event.post">
-        <div class="card-main">
-          <header class="card-header">           
-            <div class="user-info">
-              <!-- <spanclass="user-name txt-l txt-cut">{{item.mblog.user.screen_name}}</span> -->
-              <div class="publish-data txt-xs">
-                <span class="publish-created-at">{{formatDate(item.post_on)}}</span>
-              </div>
-            </div>            
-          </header>
-          <section class="card-body">
-            <p class="default-content" v-html="item.text"></p>
-            <div v-if="item.assets.length === 1" :class="{singlePic:!isVideo(item), singleVideo: isVideo(item)}" v-lazy-container="{selector:'img'}">
-              <img v-if="!isVideo(item)" @click="show(item.assets, 0)" :data-src="getImageUrl(item.assets[0], true)">
-              <!-- <div v-else @click="playVideo(item.assets[0])" class='video'> -->
-                <!-- <img :data-src="getVideoThumb(item.assets[0])">
-                <img class="asset-load-icon-item" data-src='http://assetlib.moboo.ly/moboo.displayer.asset.btn_playvideo@2x_001.svg'> -->
-              <!-- </div> -->
-              <video v-else  :poster="getVideoThumb(item.assets[0])" :src="item.assets[0].url" controls="true"/>
-
-            </div>
-            <ul v-if="item.assets.length >= 2" class="pic-list">
-              <li v-for="(asset,a_index) in item.assets" @click="show(item.assets, a_index)">
-                <div><img :src="getImageUrl(asset)"></div>
-              </li>
-            </ul>            
-          </section>           
-        </div>        
-      </div>
-    </div>
-    <div v-transfer-dom>
-      <previewer :list="imageList" ref="previewer"></previewer>
-    </div>
-    <!-- <div v-if="!iOS" @touchmove.prevent v-show="showVideo" class='full-screen-video'>
-      <video id='superVideo' v-on:webkitfullscreenchange="videoExitFullScreen" v-on:fullscreenchange="videoExitFullScreen"
-       controls="controls" ref='fullScreenVideo'>
-           <source src="MY_VIDEO.webm" type='video/*'>
-      </video>
-      <button @click='closeVideo' class="video-close"></button>
-    </div> -->
-    <div v-transfer-dom>
-      <loading :show="showLoging" text="加载中"></loading>
-    </div>
+    </masker>     
+    <post-card></post-card>
+    <toast
+      v-model="showErrorToast"
+      type="text"
+      width="auto"
+      :time="1200">{{ toastMsg }}
+    </toast>    
+    <loading :show="showLoging" text="加载中"></loading>
   </div>
 </template>
  
 <script>
-import { Rater, Previewer, TransferDom, Divider, Toast, Loading, Masker, Box, XButton, Cell, Group } from 'vux'
+import { TransferDom, Divider, Toast, Loading, Masker, Box, XButton, Cell, Group } from 'vux'
 import { getCurrentEvent, getPostByEvent } from '../api/api'
 import { getDate, format } from '../utils/date-utils'
-import { isiOS, requestFullScreen } from '../utils/util'
-// import videojs from 'videojs'
+import { requestFullScreen } from '../utils/util'
+import PostCard from '@/components/PostCards'
 
 export default {
-  name: 'current_event',
+  name: 'pk-event',
   directives: {
     TransferDom
   },
   components: {
-    Rater, Previewer, TransferDom, Toast, Divider, Loading, Masker, Box, XButton, Cell, Group
+    PostCard, TransferDom, Toast, Divider, Loading, Masker, Box, XButton, Cell, Group
   },
   data () {
     return {
-      data4: 1,
-      showVideo: false,
       imageList: [{}],
-      noPost: false,
-      join: 0,
       event: null,
       date: '',
       showLoging: false,
-      ctime: 30,
-      showCountDown: false,
-      verifyCode: '',
-      phone: '',
       showErrorToast: false,
-      toastMsg: '',
-      sendDisable: false,
-      videoSource: null,
-      fullWidth: document.documentElement.clientWidth,
-      iOS: isiOS()
-    }
-  },
-  computed: {
-    getTitle () {
-      if (this.event) {
-        return this.event.activity === 1 ? '当前活动' : '活动存档'
-      } else {
-        return '无活动'
-      }
+      toastMsg: ''
     }
   },
   created () {

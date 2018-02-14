@@ -4,7 +4,7 @@
         <!-- <cell v-for="(field, index) in fields" :link="{path:'/field/'+ field.id}" :title="field.desc_text" is-link v-bind:key="index"></cell> -->
       </group>
 
-      <group v-for="(field, index) in fields" v-bind:key="index" :title="'第'+index+1+'个'" label-width="5.5em" label-margin-right="2em" label-align="justify">
+      <group v-for="(field, index) in fields" v-bind:key="index" :title="getTitle(index)" label-width="5.5em" label-margin-right="2em" label-align="justify">
         <cell title="名称" :value="field.desc_text" :link="{path:'/fields/'+ field.id}" value-align="left" is-link></cell>
         <cell title="管理员" :value="field.admins.length" :link="{path:'/fields/'+ field.id + '/admins'}" is-link value-align="left"></cell>
         <cell title="QQ群" :value="field.qq_groups.length" :link="{path:'/fields/'+ field.id + '/qq-groups'}" is-link value-align="left"></cell>
@@ -46,6 +46,9 @@ export default {
       })
   },
   methods: {
+    getTitle (index) {
+      return '第' + (index + 1) + '个'
+    },
     addField () {
       this.$router.push({path: '/fields/new'})
     },
