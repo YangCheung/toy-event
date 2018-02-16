@@ -125,15 +125,26 @@ export function getVote (voteId, callBack, errorCallback) {
   var config = {
     method: 'get',
     url: API.pk,
-    params: { voteId: voteId },
-    headers: {
-      'token': getToken()
-    }
+    params: { vote_id: voteId }
   }
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
   .catch(function (error) {
     if (errorCallback) errorCallback(error)
+  })
+}
+
+export function submitVote (vote, callBack, errorCallback) {
+  var config = {
+    method: 'post',
+    url: API.pk,
+    data: vote
+  }
+  axios(config).then(function (response) {
+    if (callBack) callBack(response.data.result)
+  })
+  .catch(function (error) {
+    if (errorCallback) errorCallback(error.response.data)
   })
 }

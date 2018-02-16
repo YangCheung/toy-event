@@ -4,7 +4,6 @@ import Router from 'vue-router'
 import Home from '@/pages/Home'
 
 import Uploader from '@/components/Uploader'
-import preview from '@/pages/preview'
 import Login from '@/pages/Login'
 import EditProfile from '@/pages/user/EditProfile'
 import CurrentEvent from '@/pages/CurrentEvent'
@@ -16,6 +15,9 @@ import FieldQQGroups from '@/admin/fields/FieldQQGroups'
 import AddField from '@/admin/AddField'
 import EventList from '@/admin/EventList'
 import MAevent from '@/admin/MAevent'
+
+import Vote from '@/pages/Vote'
+
 import { getUser } from '../utils/user-storage'
 
 // import { getToken } from '../utils/token-storage'
@@ -84,14 +86,17 @@ let router = new Router({
       component: Login
     },
     {
+      path: '/vote',
+      name: 'vote',
+      meta: {
+        NoAuth: true
+      },
+      component: Vote
+    },
+    {
       path: '/edituser',
       name: 'edituser',
       component: EditProfile
-    },
-    {
-      path: '/preview',
-      name: 'preview',
-      component: preview
     },
     {
       path: '*',

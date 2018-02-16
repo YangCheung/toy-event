@@ -1,9 +1,9 @@
 <template lang="html">  
   <div>    
-    <div class="content-tip no-text-select" v-show="posts.length == 0">
+    <div class="content-tip no-text-select" v-if="posts.length == 0">
       <span>{{emptyTip}}</span>
     </div>  
-    <div class="card" v-for="(item,index) in posts">
+    <div class="card" v-for="(item,index) in posts" v-else>
       <div class="card-main">
         <section class="card-body">
           <p class="default-content" v-html="item.text"></p>
@@ -17,8 +17,11 @@
             </li>
           </ul>            
         </section>
-        <footer class="card-footer">           
-          <rater v-model="data4" :font-size="45" ></rater>
+        <footer class="card-footer">   
+          <span>选择评分</span>
+          <div class="stars">
+            <rater v-model="stars[index]" :font-size="35" ></rater>
+          </div>                  
         </footer>
       </div>        
     </div>
@@ -41,7 +44,15 @@ export default {
     },
     posts: {
       type: Array,
-      default: []
+      default: function () {
+        return []
+      }
+    }
+  },
+  data () {
+    return {
+      imageList: [{}],
+      stars: []
     }
   },
   directives: {
@@ -50,9 +61,9 @@ export default {
   components: {
     Rater, Previewer, TransferDom
   },
-  data () {
-    return {
-      imageList: [{}]
+  watch: {
+    stars () {
+      this.$emit('on-start', this.stars)
     }
   },
   methods: {
@@ -96,7 +107,7 @@ export default {
 }
 </script>
  
-<style lang="less">
+<style lang="less" scoped>
 .no-scroll {
   overflow: hidden
 }
@@ -169,7 +180,6 @@ export default {
 }
 .card-header {
   display: flex;
-
   .header-bg {
     width: 100%;
     height: 60px;
@@ -192,8 +202,19 @@ export default {
       }        
     }
     
+  } 
+}
+
+.card-footer {
+  padding: 5px;
+  border: 1px solid #f0f0f0; 
+  position: relative;
+  text-align: center;
+  font-size: 18px;
+  color: gray;
+  .stars{
+    margin-top: 2px
   }
-   
 }
   
 .user-info{
