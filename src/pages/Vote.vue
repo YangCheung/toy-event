@@ -90,9 +90,8 @@ export default {
       return false
     },
     changeStar (starsArray) {
-      this.canSubmit = this.checkStatus()
       this.stars = starsArray
-      console.log(this.stars)
+      this.canSubmit = this.checkStatus()
     },
     showToast: function (msg) {
       this.toastMsg = msg
