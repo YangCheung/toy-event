@@ -9,6 +9,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+
 const QiniuPlugin = require('qn-webpack');
 
 const env = process.env.NODE_ENV === 'testing'
@@ -20,7 +22,8 @@ const qiniuPlugin = new QiniuPlugin({
   accessKey: '-m1LzxFKMhXaApWxDgK8TyI99gTy-RJYIEg0c9Ig',
   secretKey: 'IStf6MkdpmzFu7Q2rou0mCU8feL0_4uz0JAjEjJ0',
   bucket: 'store-live-default',
-  batch: 1
+  batch: 1,
+  exclude: /\.map$/
 });
 
 const webpackConfig = merge(baseWebpackConfig, {
@@ -40,15 +43,16 @@ const webpackConfig = merge(baseWebpackConfig, {
 
   },
   plugins: [
-    qiniuPlugin,
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
     }),
     // UglifyJs do not support ES6+, you can also use babel-minify for better treeshaking: https://github.com/babel/minify
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          warnings: false
+        }
       },
       sourceMap: config.build.productionSourceMap,
       parallel: true
@@ -128,7 +132,8 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    qiniuPlugin
   ]
 })
 

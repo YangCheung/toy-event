@@ -21,7 +21,12 @@
         <x-button type="primary" @click.native="returnList" action-type="button">返回列表</x-button>
     </box>
     <loading :show="showLoging" text="加载中"></loading>
-
+    <toast
+      v-model="showErrorToast"
+      type="text"
+      width="auto"
+      :time="1200">{{ toastMsg }}
+    </toast>    
   </div>  
 </template>
  
@@ -59,11 +64,11 @@ export default {
     }
     let that = this
     adminFieldList(this.id,
-     (response) => {
-       if (response && response.length > 0) {
-         that.setData(response[0])
-       }
-     },
+      (response) => {
+        if (response && response.length > 0) {
+          that.setData(response[0])
+        }
+      },
       (error) => {
         console.log(error)
       })

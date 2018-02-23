@@ -19,13 +19,13 @@ export function getUserProfile (callBack, errorCallback) {
       token: getToken()
     }
   })
-  .then(function (response) {
-    saveUserInfo(response)
-    if (callBack) callBack(response.data.result)
-  })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .then(function (response) {
+      saveUserInfo(response)
+      if (callBack) callBack(response.data.result)
+    })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function getCurrentEvent (eventId, callBack, errorCallback) {
@@ -35,11 +35,25 @@ export function getCurrentEvent (eventId, callBack, errorCallback) {
       token: getToken()
     }
   })
-  .then(
-    (response) => { if (callBack) callBack(response.data.result) })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
+    .then(
+      (response) => { if (callBack) callBack(response.data.result) })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
+}
+
+export function getEventStatistics (eventId, callBack, errorCallback) {
+  axios.get(API.event_statistics, {
+    params: {
+      eventId: eventId,
+      token: getToken()
+    }
   })
+    .then(
+      (response) => { if (callBack) callBack(response.data.result) })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function editUserProfile (user, callBack, errorCallback) {
@@ -54,9 +68,9 @@ export function editUserProfile (user, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function sendSmsCode (phone, callBack, errorCallback) {
@@ -68,9 +82,9 @@ export function sendSmsCode (phone, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function verifyCode (phone, code, callBack, errorCallback) {
@@ -82,9 +96,9 @@ export function verifyCode (phone, code, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function sendPost (feed, callBack, errorCallback) {
@@ -99,9 +113,9 @@ export function sendPost (feed, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function getPostByEvent (eventId, callBack, errorCallback) {
@@ -116,9 +130,9 @@ export function getPostByEvent (eventId, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function getVote (voteId, callBack, errorCallback) {
@@ -130,9 +144,9 @@ export function getVote (voteId, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
 }
 
 export function submitVote (vote, callBack, errorCallback) {
@@ -144,7 +158,7 @@ export function submitVote (vote, callBack, errorCallback) {
   axios(config).then(function (response) {
     if (callBack) callBack(response.data.result)
   })
-  .catch(function (error) {
-    if (errorCallback) errorCallback(error.response.data)
-  })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error.response.data)
+    })
 }

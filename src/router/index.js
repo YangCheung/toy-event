@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import HelloFromVux from '@/components/HelloFromVux'
 import Home from '@/pages/Home'
 
 import Uploader from '@/components/Uploader'
@@ -20,12 +19,10 @@ import Vote from '@/pages/Vote'
 
 import { getUser } from '../utils/user-storage'
 
-// import { getToken } from '../utils/token-storage'
-// import { getUserProfile } from '../api/api'
-
 Vue.use(Router)
 
 let router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -86,7 +83,7 @@ let router = new Router({
       component: Login
     },
     {
-      path: '/vote',
+      path: '/v/:id',
       name: 'vote',
       meta: {
         NoAuth: true

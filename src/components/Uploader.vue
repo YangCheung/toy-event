@@ -121,7 +121,7 @@ export default {
       }
       sendPost(feed, (response) => {
         this.showToast('发布成功')
-        this.$router.replace({name: 'current-event'})
+        this.$router.back()
       }, (error) => {
         console.log(error)
         this.showToast('发布失败')
@@ -152,11 +152,11 @@ export default {
         }
       }
       axios.post('http://upload.qiniu.com/', param, config)
-          .then(response => {
-            file.result = response.data
-            console.log(response.data)
-            Vue.set(file, 'percent', 100)
-          })
+        .then(response => {
+          file.result = response.data
+          console.log(response.data)
+          Vue.set(file, 'percent', 100)
+        })
     },
     fileSelected (e) {
       var url = window.URL || window.webkitURL || window.mozURL

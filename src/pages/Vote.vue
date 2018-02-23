@@ -1,10 +1,11 @@
 <template lang="html">
-  <div>
-    <div v-if="posts.length > 0">
+  <div v-if="!showLoging">
+    <div>
+      <div v-if="posts.length > 0">
       <div class="m-main">
         <div class="m-title">邀请投票</div>
       </div>
-      <post-card v-on:on-start="changeStar" :posts="posts"></post-card>
+      <post-card :showStar="true" v-on:on-start="changeStar" :posts="posts"></post-card>
       <box v-if="showSubmit" gap="40px 15px">
           <x-button :disabled="!canSubmit" type="primary" @click.native="submit" action-type="button">提交评分</x-button>
       </box>   
@@ -17,6 +18,8 @@
           <x-button type="default" @click.native="gohome" action-type="button">回到首页</x-button>
       </box>   
     </div>
+    </div>
+    
     <toast
       v-model="showErrorToast"
       type="text"
@@ -31,6 +34,7 @@
 import { Toast, Loading, Box, XButton } from 'vux'
 import { getVote, submitVote } from '../api/api'
 import PostCard from '@/components/PostCards'
+import { hasDuplicates } from '../utils/util'
 
 export default {
   name: 'vote',
@@ -58,19 +62,20 @@ export default {
   created () {
     this.showLoging = true
     let self = this
-    let eventId = this.$route.query.eventId
+    let eventId = this.$route.params.id
+    console.log(this.$route)
     getVote(eventId, result => {
       self.vote = result
       this.showLoging = false
     },
-     (error) => {
-       self.showLoging = false
-       this.showLoging = false
+    (error) => {
+      self.showLoging = false
+      this.showLoging = false
 
-       if (error) {
+      if (error) {
 
-       }
-     })
+      }
+    })
   },
   methods: {
     checkStatus () {
@@ -98,6 +103,10 @@ export default {
     },
     submit () {
       if (this.checkStatus) {
+        if (hasDuplicates(this.stars)) {
+          this.showToast('每个作品打分值不能相同')
+          return
+        }
         for (let i = 0; i < this.stars.length; i++) {
           (this.vote.posts[i])['score'] = this.stars[i]
         }

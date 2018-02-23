@@ -8,9 +8,8 @@
       </group>
       <box gap="55px 15px">
         <x-button type="primary" @click.native="addEvent" action-type="button">添加活动</x-button>    
-        <x-button  @click.native="returnList" action-type="button">返回领域列表</x-button>
-      </box>
-      
+      </box>      
+
       <group v-if="event_history.length > 0" :title="'往期活动'">
         <cell v-for="(event, index) in event_history" :link="{path:'./events/'+ event.id}" :title="event.desc_text" is-link v-bind:key="index"></cell>
       </group>      
@@ -39,12 +38,12 @@ export default {
     this.field_id = this.$route.params.fieldid
 
     eventList('', this.field_id,
-     (response) => {
-       this.setData(response)
-     },
-    (error) => {
-      console.log(error)
-    })
+      (response) => {
+        this.setData(response)
+      },
+      (error) => {
+        console.log(error)
+      })
   },
   methods: {
     addEvent () {
@@ -53,10 +52,10 @@ export default {
     setData (value) {
       this.events = value
       this.event_activity = this.events.filter(function (item) {
-        return item.activity === 1
+        return Math.abs(item.activity) === 1
       })
       this.event_history = this.events.filter(function (item) {
-        return item.activity < 0
+        return item.activity === -2
       })
       this.event_backup = this.events.filter(function (item) {
         return item.activity === 0

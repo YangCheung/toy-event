@@ -22,7 +22,7 @@
         <x-button type="primary" @click.native="verify" action-type="button">登录</x-button>
       </box>     
           
-      <loading :show="showLoging" text="加载中"></loading>
+      <loading :show="showLoging" text=""></loading>
     </div>
 </template>
  
@@ -64,11 +64,13 @@ export default {
         return
       }
       this.sendDisable = true
-
+      this.showLoging = true
       sendSmsCode(this.phone, () => {
         this.sendDisable = false
         this.showCountDown = true
+        this.showLoging = false
       }, () => {
+        this.showLoging = false
         this.sendDisable = false
         this.showToast('发送验证码失败')
       })

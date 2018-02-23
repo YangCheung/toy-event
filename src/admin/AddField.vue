@@ -5,7 +5,7 @@
     </group>
 
      <group v-if="admins.length < 3" title="添加管理员">
-      <x-input title="管理员1" keyboard="number" v-model="inputAdminPhone" placeholder="管理员手机号码  "  :show-clear="true" placeholder-align="right" :max="30">
+      <x-input title="管理员" keyboard="number" v-model="inputAdminPhone" placeholder="管理员手机号码  "  :show-clear="true" placeholder-align="right" :max="30">
         <x-button slot="right" type="primary" @click.native="verify" mini>添加</x-button>
       </x-input>   
     </group>
@@ -75,11 +75,11 @@ export default {
     }
     let that = this
     adminFieldList(id,
-     (response) => {
-       if (response && response.length > 0) {
-         that.setData(response[0])
-       }
-     },
+      (response) => {
+        if (response && response.length > 0) {
+          that.setData(response[0])
+        }
+      },
       (error) => {
         console.log(error)
       })

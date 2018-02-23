@@ -84,3 +84,24 @@ export function activateEvent (event, callBack, errorCallback) {
     console.log(error)
   })
 }
+
+export function deactivateEvent (event, callBack, errorCallback) {
+  console.log(event)
+  var config = {
+    method: 'post',
+    url: API.event_finish,
+    data: event,
+    headers: {
+      'token': getToken()
+    }
+  }
+  axios(config)
+  .then(function (response) {
+    if (callBack) callBack(response.data.result)
+    console.log(response)
+  })
+  .catch(function (error) {
+    if (errorCallback) errorCallback(error.response.data)
+    console.log(error)
+  })
+}

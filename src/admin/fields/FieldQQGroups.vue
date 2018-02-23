@@ -53,11 +53,11 @@ export default {
     }
     let that = this
     adminFieldList(this.id,
-     (response) => {
-       if (response && response.length > 0) {
-         that.setData(response[0])
-       }
-     },
+      (response) => {
+        if (response && response.length > 0) {
+          that.setData(response[0])
+        }
+      },
       (error) => {
         console.log(error)
       })

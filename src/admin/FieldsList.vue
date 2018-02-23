@@ -9,6 +9,7 @@
         <cell title="管理员" :value="field.admins.length" :link="{path:'/fields/'+ field.id + '/admins'}" is-link value-align="left"></cell>
         <cell title="QQ群" :value="field.qq_groups.length" :link="{path:'/fields/'+ field.id + '/qq-groups'}" is-link value-align="left"></cell>
         <cell title="活动列表" :link="{path:'/fields/'+ field.id + '/events'}" is-link value-align="left"></cell>
+        <cell title="注册人数" :value="field.user_count" value-align="left"></cell>
       </group>
 
       <box gap="45px 15px">
@@ -36,10 +37,10 @@ export default {
   },
   created () {
     adminFieldList('',
-     (response) => {
-       this.setData(response)
-       this.showLoging = false
-     },
+      (response) => {
+        this.setData(response)
+        this.showLoging = false
+      },
       (error) => {
         this.showLoging = false
         console.log(error)

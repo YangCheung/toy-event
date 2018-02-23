@@ -5,6 +5,22 @@
     </div>  
     <div class="card" v-for="(item,index) in posts" v-else>
       <div class="card-main">
+         <header class="card-header">           
+            <div class="user-info">
+              <span v-if="item.user_qq_group" class="user-name txt-l txt-cut">{{item.user_name}}</span>
+              <div v-if="item.user_qq_group" class="publish-data">
+                <span>{{'QQ ' + item.user_qq}}</span>
+                <span class="publish-source">{{'来自群: ' + item.user_qq_group}}</span>
+              </div>
+              <div v-if="item.user_qq_group" class="score">
+                <span >{{'得分: ' + item.score}}</span>
+              </div>
+
+              <div v-else class="publish-data txt-xs">
+                <span class="publish-created-at">{{formatDate(item.post_on)}}</span>
+              </div>
+            </div>            
+          </header>
         <section class="card-body">
           <p class="default-content" v-html="item.text"></p>
           <div v-if="item.assets.length === 1" :class="{singlePic:!isVideo(item), singleVideo: isVideo(item)}" v-lazy-container="{selector:'img'}">
@@ -17,7 +33,7 @@
             </li>
           </ul>            
         </section>
-        <footer class="card-footer">   
+        <footer v-if="showStar" class="card-footer">   
           <span>选择评分</span>
           <div class="stars">
             <rater v-model="stars[index]" :font-size="35" ></rater>
@@ -34,10 +50,15 @@
 <script>
 import { Rater, Previewer, TransferDom } from 'vux'
 import { requestFullScreen } from '../utils/util'
+import { format } from '../utils/date-utils'
 
 export default {
   name: 'post_cards',
   props: {
+    showStar: {
+      type: Boolean,
+      default: false
+    },
     emptyTip: {
       type: String,
       default: '这会儿还没有新动态，等会再来刷刷看吧(｡･ω･｡)！'
@@ -67,6 +88,9 @@ export default {
     }
   },
   methods: {
+    formatDate (date) {
+      return format(date)
+    },
     videoExitFullScreen () {
       // if (!document.webkitIsFullScreen) {
       //   this.closeVideo()
@@ -121,56 +145,6 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
-.m-img {
-  padding-bottom: 50%;
-  display: block;
-  position: relative;
-  max-width: 100%;
-  background-size: cover;
-  background-color: #bcbbec;
-  background-position: center center;
-  cursor: pointer;
-  border-radius: 2px;
-}
-.m-content {
-  font-size: 16px;
-  color:#666;
-  line-height: 30px;
-  margin: 30px 20px 10px 20px
-}
-.m-title {
-  font-size: 18px;
-  font-weight: 400;
-}
-.m-sub-title {
-  font-size: 16px;
-  font-weight: 300;
-}
-.m-main {
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 0 2px rgba(0, 0, 0, .5);
-  font-weight: 500;
-  font-size: 25px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 100%;
-  text-align: center;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.m-time {
-  font-size: 16px;
-  margin-top: 10px;
-  padding-top: 4px;
-  border-top: 1px solid #f0f0f0;
-  padding-left: 20px;
-  padding-right: 20px;
-  display: inline-block;
-}
-
 .card {
   width :100%;
   background-color: #fff;
@@ -222,19 +196,28 @@ export default {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  flex-wrap: wrap;
   padding: .6875rem .6875rem 0;
   line-height: 1rem;
+  .score {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    color:gray;
+    font-size: 25px;
+  }
   .user-name {
     color: #333;
+    margin-bottom: 3px;
   }    
   .publish-data {
     color: #929292;
     font-size: 10px;
     .publish-source {
-      padding-left: .5rem;
+      padding-left: 10px;
     }  
   }      
-}      
+}
 
 .card-body{
   padding: .25rem .75rem .625rem;
