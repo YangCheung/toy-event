@@ -134,7 +134,7 @@ export default {
 }
 .m-main {
   margin-bottom: 10px;
-  background-color: #1AAD19;
+  background-color: cadetblue;
   text-align: center;
   color: #fafafa;
   position: relative;
@@ -148,7 +148,7 @@ export default {
 
 .expired_main {
   margin-bottom: 10px;
-  background-color: #1AAD19;
+  background-color: cadetblue;
   text-align: center;
   color: #fafafa;
   position: relative;

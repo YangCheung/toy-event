@@ -1,8 +1,7 @@
-// import { logger } from '../utils/logger'
 
 let localUser = null
 
-export const saveUserInfo = (userInfo) => {
+export function saveUserInfo (userInfo) {
   localUser = userInfo
   // const localStorage = window.localStorage
   // try {

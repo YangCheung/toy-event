@@ -2,8 +2,11 @@ export const format = (date) => {
   return getDateDiff(new Date(date).getTime())
 }
 
-export const getDate = () => {
+export const getDate = (dt) => {
   let date = new Date()
+  if (dt !== undefined) {
+    date = new Date(dt)
+  }
   let m = date.getMonth() + 1
   let d = date.getDate()
   return m + '月' + d + '日'

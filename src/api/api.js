@@ -20,7 +20,7 @@ export function getUserProfile (callBack, errorCallback) {
     }
   })
     .then(function (response) {
-      saveUserInfo(response)
+      saveUserInfo(response.data.result)
       if (callBack) callBack(response.data.result)
     })
     .catch(function (error) {
@@ -37,6 +37,21 @@ export function getCurrentEvent (eventId, callBack, errorCallback) {
   })
     .then(
       (response) => { if (callBack) callBack(response.data.result) })
+    .catch(function (error) {
+      if (errorCallback) errorCallback(error)
+    })
+}
+
+export function userEventList (fieldId, callBack, errorCallback) {
+  axios.get(API.user_event_list, {
+    params: {
+      field_id: fieldId,
+      token: getToken()
+    }
+  })
+    .then(function (response) {
+      if (callBack) callBack(response.data.result)
+    })
     .catch(function (error) {
       if (errorCallback) errorCallback(error)
     })

@@ -24,6 +24,7 @@ const api_router_config = {
   event_status: apiHost + 'manage/events/status',
   event_finish: apiHost + 'manage/events/finish',
   current_event:apiHost + 'current-event',
+  user_event_list: apiHost + 'user-events',
   event_statistics:apiHost + 'event-statistics',
 
   sms: apiHost + 'sms'

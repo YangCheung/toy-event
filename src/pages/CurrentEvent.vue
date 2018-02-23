@@ -26,10 +26,11 @@
       </box>     
     </div>
 
-     <group style="margin-bottom:20px" v-if="admin && statistics != null" title="统计信息" label-width="8.5em" label-margin-right="2em" label-align="justify">
+     <group style="margin-bottom:20px" v-if="event != null && admin && statistics != null" title="统计信息" label-width="8.5em" label-margin-right="2em" label-align="justify">
         <cell title="作品总数" :value="statistics.feed_count" value-align="left"></cell>
         <cell title="参与人数/总人数" :value="statistics.attend_user_count + '/' + statistics.user_count" value-align="left"></cell>
         <cell title="参与QQ群" :value="statistics.attend_user_qq_group" value-align="left"></cell>
+        <cell title="选票是否发送" :value="event.has_vote?'已发送':'未发送'" value-align="left"></cell>
         <cell title="有效投票" :value="statistics.attend_vote_count + '/' + statistics.vote_count" value-align="left"></cell>
     </group>
 
@@ -77,14 +78,18 @@ export default {
   computed: {
     getTitle () {
       if (this.event) {
-        return this.event.activity === 1 ? '当前活动' : '活动存档'
+        if (this.event.activity === 1) {
+          return '当前活动'
+        } else if (this.event.activity === -1 && this.event.has_vote) {
+          return '当前活动(投票中)'
+        }
+        return '活动存档'
       } else {
         return '无活动'
       }
     }
   },
   created () {
-    this.date = getDate()
     this.showLoging = true
     let self = this
     let eventId = this.$route.query.eventId
@@ -97,7 +102,7 @@ export default {
     getCurrentEvent(eventId, result => {
       self.event = result.event
       self.join = result.join
-
+      this.date = getDate(self.event.start_time)
       console.log(result)
       self.event.post = result.event.posts
       self.showLoging = false

@@ -2,7 +2,10 @@
   <div>
     <router-view></router-view>
     <user-button></user-button>
-
+    
+    <div v-transfer-dom>
+      <loading :show="showLoging" text="加载中"></loading>
+    </div>
   </div>
 </template>
  
@@ -12,19 +15,26 @@ import { getUser } from '../utils/user-storage'
 import UserButton from '../components/UserButton'
 import { getUserProfile } from '../api/api'
 import { getToken } from '../utils/token-storage'
+import { Loading, TransferDom } from 'vux'
 
 export default {
   name: 'home',
-  components: { UserButton },
+  directives: {
+    TransferDom
+  },
+  components: { UserButton, Loading },
   data () {
     return {
+      showLoging: false,
       talion: '',
       user: null
     }
   },
   created () {
     console.log('home created')
+    this.showLoging = true
     getUserProfile((user) => {
+        this.showLoging = false
         this.user = user
         this.checkCurrentUser(user)
       }, 
@@ -51,7 +61,8 @@ export default {
       } else if (!user.qq || !user.qq_group){
         this.$router.replace({name: 'edituser'})
       } else {
-        this.$router.replace({name: 'current-event'})
+        // this.$router.replace({name: 'current-event'})
+        this.$router.replace({name: 'user-eventlist'})
       }
     }
   }

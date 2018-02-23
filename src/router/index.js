@@ -6,6 +6,7 @@ import Uploader from '@/components/Uploader'
 import Login from '@/pages/Login'
 import EditProfile from '@/pages/user/EditProfile'
 import CurrentEvent from '@/pages/CurrentEvent'
+import UserEventList from '@/pages/UserEventList'
 
 import FieldsList from '@/admin/FieldsList'
 import FieldAdmins from '@/admin/fields/FieldAdmins'
@@ -36,6 +37,11 @@ let router = new Router({
           path: '/current-event',
           name: 'current-event',
           component: CurrentEvent
+        },
+        {
+          path: '/user-eventlist',
+          name: 'user-eventlist',
+          component: UserEventList
         },
         {
           path: '/fields/:fieldid/events',
