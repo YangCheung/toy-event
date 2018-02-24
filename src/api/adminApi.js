@@ -140,11 +140,11 @@ export function deleteFieldQQGroup (fieldId, qq, callBack, errorCallback) {
   })
 }
 
-export function addFieldQQGroup (fieldId, qq, callBack, errorCallback) {
+export function addFieldQQGroup (fieldId, qq, qq_name, callBack, errorCallback) {
   var config = {
     method: 'post',
     url: API.field_qq_groups,
-    data: {field_id: fieldId, qq_group: qq},
+    data: {field_id: fieldId, qq_group: qq, qq_group_name: qq_name},
     headers: {
       'token': getToken()
     }

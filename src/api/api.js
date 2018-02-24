@@ -129,7 +129,7 @@ export function sendPost (feed, callBack, errorCallback) {
     if (callBack) callBack(response.data.result)
   })
     .catch(function (error) {
-      if (errorCallback) errorCallback(error)
+      if (errorCallback) errorCallback(error.response.data)
     })
 }
 

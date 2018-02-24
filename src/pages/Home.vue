@@ -54,10 +54,10 @@ export default {
   },
   methods: {
     checkCurrentUser (user) {
-      if (user.admin) {
+      if (user.admin || user.fields && user.fields.length > 0) {
         this.$router.replace({name: 'FieldsList'})
-      } else if (user.fields && user.fields.length > 0){
-        this.$router.replace({path: '/fields/'+ user.fields[0] + '/events'})
+      // } else if (user.fields && user.fields.length > 0){
+      //   this.$router.replace({path: '/fields/'+ user.fields[0] + '/events'})
       } else if (!user.qq || !user.qq_group){
         this.$router.replace({name: 'edituser'})
       } else {

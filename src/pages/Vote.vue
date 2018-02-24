@@ -2,22 +2,23 @@
   <div v-if="!showLoging">
     <div>
       <div v-if="posts.length > 0">
-      <div class="m-main">
-        <div class="m-title">邀请投票</div>
+        <div class="m-main">
+          <div class="m-title">邀请投票</div>
+        </div>
+        <post-card :showStar="true" v-on:on-start="changeStar" :posts="posts"></post-card>
+        <box v-if="showSubmit" gap="40px 15px">
+            <x-button :disabled="!canSubmit" type="primary" @click.native="submit" action-type="button">提交评分</x-button>
+        </box>   
+      </div>  
+      <div v-else>
+        <div class="expired_main">
+          <div class="m-title">投票已过期</div>
+        </div>      
       </div>
-      <post-card :showStar="true" v-on:on-start="changeStar" :posts="posts"></post-card>
-      <box v-if="showSubmit" gap="40px 15px">
-          <x-button :disabled="!canSubmit" type="primary" @click.native="submit" action-type="button">提交评分</x-button>
-      </box>   
-    </div>  
-    <div v-else>
-      <div class="expired_main">
-        <div class="m-title">投票已过期</div>
-      </div>
-      <box gap="40px 15px">
+
+      <box v-if="posts.length == 0 || show_home" gap="40px 15px">
           <x-button type="default" @click.native="gohome" action-type="button">回到首页</x-button>
       </box>   
-    </div>
     </div>
     
     <toast
@@ -43,6 +44,7 @@ export default {
   },
   data () {
     return {
+      show_home: false,
       imageList: [{}],
       vote: null,
       date: '',
@@ -71,7 +73,7 @@ export default {
     (error) => {
       self.showLoging = false
       this.showLoging = false
-
+      this.show_home = true
       if (error) {
 
       }
@@ -112,6 +114,7 @@ export default {
         submitVote(this.vote, result => {
           this.showToast('提交成功')
           this.showSubmit = false
+          this.show_home = true
         }, (error) => {
           this.showToast(error.message)
         })

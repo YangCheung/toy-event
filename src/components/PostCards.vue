@@ -10,7 +10,7 @@
               <span v-if="item.user_qq_group" class="user-name txt-l txt-cut">{{item.user_name}}</span>
               <div v-if="item.user_qq_group" class="publish-data">
                 <span>{{'QQ ' + item.user_qq}}</span>
-                <span class="publish-source">{{'来自群: ' + item.user_qq_group}}</span>
+                <span class="publish-source">{{'来自群: ' + (item.user_qq_group_name != null?item.user_qq_group_name:item.user_qq_group)}}</span>
               </div>
               <div v-if="item.user_qq_group && item.score != undefined" class="score">
                 <span >{{'得分: ' + item.score}}</span>

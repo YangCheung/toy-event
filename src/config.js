@@ -13,7 +13,7 @@ const api_router_config = {
 
   user: apiHost + 'auth/user',
 
-  fields: apiHost + 'admin/fields',
+  fields: apiHost + 'fields',
 
   adminuser: apiHost + 'admin/user',
   adminAddField: apiHost + 'admin/fields',

@@ -1,19 +1,28 @@
 <template lang="html">
   <div>
    <group title="添加QQ群">
-      <x-input keyboard="number" v-model="input_qq" placeholder="输入QQ群号码  "  :show-clear="true" placeholder-align="left" :max="30">
-        <x-button slot="right" type="primary" @click.native="verify" mini>添加</x-button>
+      <x-input title="QQ群号码" keyboard="number" v-model="input_qq" placeholder="QQ群"  :show-clear="true" placeholder-align="left" :max="30">
+      </x-input> 
+      <x-input title="QQ群名称" keyboard="string" v-model="input_qq_g_name" placeholder="QQ群名称" :show-clear="true" placeholder-align="left" :max="30">
+        <!-- <x-button type="primary" @click.native="verify" mini>添加</x-button> -->
       </x-input>   
     </group>
+    <box gap="35px 15px">
+      <x-button type="primary" @click.native="verify" >添加</x-button>
+    </box>
     <group v-if="qq_groups.length > 0" title="滑动删除"></group>
     <swipeout>
       <swipeout-item v-for="(qq, index) in qq_groups" v-bind:key="index" :threshold=".5" underlay-color="#ccc">
         <div slot="right-menu">
           <swipeout-button @click.native="deleteAdmin(index)" background-color="#D23934">删除</swipeout-button>
         </div>
-        <div slot="content" class="demo-content vux-1px-tb">
+        <group slot="content" labelWidth="100px">
+          <cell :value="qq.qq_group_name" value-align="left"></cell>
+          <cell :value="qq.qq_group" value-align="left"></cell>
+        </group>
+        <!-- <div slot="content" class="demo-content vux-1px-tb">
           {{qq.qq_group}}
-        </div>
+        </div> -->
       </swipeout-item>
     </swipeout> 
           
@@ -39,6 +48,7 @@ export default {
       showLoging: false,
       id: '',
       input_qq: '',
+      input_qq_g_name: '',
       field: {},
       qq_groups: [],
       showErrorToast: false,
@@ -81,15 +91,16 @@ export default {
         })
     },
     verify () {
-      if (!this.input_qq) {
+      if (!this.input_qq || !this.input_qq_g_name) {
         return
       }
       this.showLoging = true
 
-      addFieldQQGroup(this.id, this.input_qq,
+      addFieldQQGroup(this.id, this.input_qq, this.input_qq_g_name,
         (qq) => {
           this.qq_groups.push(qq)
           this.input_qq = ''
+          this.input_qq_g_name = ''
           this.showLoging = false
         }, () => {
           this.showLoging = false

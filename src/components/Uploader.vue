@@ -50,7 +50,6 @@ export default {
   },
   data () {
     return {
-      videoType: false,
       text: '',
       sizeLimit: 9,
       mode: 'image',
@@ -64,7 +63,6 @@ export default {
   watch: {
     dFiles: function () {
       if (this.dFiles.length === 0) {
-        this.mode = ''
         console.log('mode reset')
         this.sizeLimit = 9
       }
@@ -124,7 +122,7 @@ export default {
         this.$router.back()
       }, (error) => {
         console.log(error)
-        this.showToast('发布失败')
+        this.showToast(error.message != null ? error.message : '发布失败')
       })
     },
     showToast: function (msg) {
