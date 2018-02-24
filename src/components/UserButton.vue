@@ -15,6 +15,7 @@
 import { Actionsheet } from 'vux'
 import { clearUserInfo } from '../utils/user-storage'
 import { clearToken } from '../utils/token-storage'
+import { getUserProfile } from '../api/api'
 
 export default {
   name: 'user-button',
@@ -25,10 +26,18 @@ export default {
     return {
       showPop: false,
       moreMenu: {
+        user: '',
         home: '首页',
         logout: '<span style="color:red">退出</span>'
       }
     }
+  },
+  created: function () {
+    getUserProfile((user) => {
+      this.user = user
+      this.moreMenu.user = (user.nick_name != null ? user.nick_name + ' ' : '') + user.qq
+    },
+    () => { this.$router.replace({name: 'login'}) })
   },
   methods: {
     showMore () {

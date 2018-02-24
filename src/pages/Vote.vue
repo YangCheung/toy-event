@@ -1,9 +1,11 @@
 <template lang="html">
   <div v-if="!showLoging">
     <div>
+      <!--  -->
       <div v-if="posts.length > 0">
         <div class="m-main">
-          <div class="m-title">邀请投票</div>
+          <div>邀请投票</div>
+          <div class="m-title">{{vote.event_desc}}</div>
         </div>
         <post-card :showStar="true" v-on:on-start="changeStar" :posts="posts"></post-card>
         <box v-if="showSubmit" gap="40px 15px">
@@ -46,7 +48,7 @@ export default {
     return {
       show_home: false,
       imageList: [{}],
-      vote: null,
+      vote: {},
       date: '',
       showLoging: false,
       showErrorToast: false,
@@ -58,7 +60,7 @@ export default {
   },
   computed: {
     posts () {
-      return this.vote == null ? [] : this.vote.posts
+      return this.vote && this.vote.posts ? this.vote.posts : []
     }
   },
   created () {
