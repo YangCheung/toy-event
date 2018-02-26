@@ -35,7 +35,7 @@ export default {
   created: function () {
     getUserProfile((user) => {
       this.user = user
-      this.moreMenu.user = (user.nick_name != null ? user.nick_name + ' ' : '') + user.qq
+      this.moreMenu.user = '修改个人资料' + (user.nick_name != null ? user.nick_name : user.qq)
     },
     () => { this.$router.replace({name: 'login'}) })
   },
@@ -53,6 +53,8 @@ export default {
         clearUserInfo()
         clearToken()
         this.$router.replace({name: 'login'})
+      } else if (key === 'user') {
+        this.$router.replace({name: 'edituser'})
       }
     }
   }

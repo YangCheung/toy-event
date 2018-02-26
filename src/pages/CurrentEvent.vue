@@ -30,7 +30,11 @@
         <cell title="作品总数" :value="statistics.feed_count" value-align="left"></cell>
         <cell title="参与人数/总人数" :value="statistics.attend_user_count + '/' + statistics.user_count" value-align="left"></cell>
         <cell title="选票是否发送" :value="event.has_vote?'已发送':'未发送'" value-align="left"></cell>
-        <cell title="有效投票" :value="statistics.attend_vote_count + '/' + statistics.vote_count" value-align="left"></cell>
+        <cell title="有效投票" is-link :arrow-direction="showVotelist ? 'up' : 'down'" @click.native="showVotelist = !showVotelist"  :value="statistics.attend_vote_count + '/' + statistics.vote_count" value-align="left"></cell>
+        <template v-if="showVotelist">
+            <cell v-for="(item,index) in statistics.attend_vote_users" v-bind:key="index" value-align="left"
+             :title="item.user.nick_name" :inlineDesc="'QQ: ' + item.user.qq" :value="item.group_name + '_'+ item.user.qq_group"></cell>
+        </template> 
         <cell title="参与QQ群" is-link :arrow-direction="showQQlist ? 'up' : 'down'" @click.native="showQQlist = !showQQlist" :value="statistics.attend_user_qq_group" value-align="left"></cell>
         <template v-if="showQQlist">
             <cell v-for="(item,index) in statistics.attend_user_qq_groups" v-bind:key="index" value-align="left"
@@ -66,6 +70,7 @@ export default {
   },
   data () {
     return {
+      showVotelist: false,
       showQQlist: false,
       statistics: null,
       imageList: [{}],

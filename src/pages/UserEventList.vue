@@ -34,6 +34,7 @@ export default {
 
   data () {
     return {
+      hasData: false,
       showLoging: false,
       empty: false,
       event_activity: [],
